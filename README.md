@@ -1,1 +1,0 @@
-# 3D-Tic-tac-toe
