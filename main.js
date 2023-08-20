@@ -11,6 +11,11 @@ camera.position.set(1, 1, 100);
 
 // Create the TicTacToe board
 const board = new THREE.Group();
+const hiddenCubesGroup = new THREE.Group();
+
+// Player Turn
+let currentPlayer = 'sphere'; // Starting with sphere
+
 
 // Vertical lines
 const verticalLineGeometry = new THREE.BoxGeometry(4, 64, 4);
@@ -55,12 +60,43 @@ const horizontalLineMiddleBottom = new THREE.Mesh(horizontalLineGeometry, horizo
 horizontalLineMiddleBottom.position.set(0, -10, 12);
 board.add(horizontalLineMiddleBottom);
 
+// Hidden cubes
+function _hiddenCube(offsets) {
+    const cubeGeometry = new THREE.BoxGeometry(8, 8, 8);
+    const cubeMaterial = new THREE.MeshBasicMaterial({color: 0x327fa8});
+    const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    cube.position.x = offsets.x;
+    cube.position.y = offsets.y;
+    cube.position.z = offsets.z;
+    return cube;
+}
+
+const hiddenCubeOffsets = [
+    { x: -20, y: 20, z: 12 },
+    { x: 0, y: 20, z: 12 },
+    { x: 20, y: 20, z: 12 },
+    { x: -20, y: 0, z: 12 },
+	{ x: 0, y: 0, z: 12 },
+	{ x: 20, y: 0, z: 12 },
+	{ x: -20, y: -20, z: 12 },
+	{ x: 0, y: -20, z: 12 },
+	{ x: 20, y: -20, z: 12 },
+];
+
+// Add Event Listeners and Handle Click Event
+hiddenCubeOffsets.forEach(offsets => {
+    const hiddenCube = _hiddenCube(offsets);
+    hiddenCubesGroup.add(hiddenCube);
+
+
+});
 
 scene.add(board);
+scene.add(hiddenCubesGroup);
 
 function animate() {
 	requestAnimationFrame(animate);
-    board.rotation.y += 0.002;
+    // board.rotation.y += 0.0001;
 	renderer.render(scene, camera);
 }
 
