@@ -88,39 +88,68 @@ horizontalLineMiddleBottom.position.set(0, -10, 12);
 board.add(horizontalLineMiddleBottom);
 
 // Hidden cubes
-function _hiddenCube(offsets) {
-  const cubeGeometry = new THREE.BoxGeometry(8, 8, 8);
-  const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0x327fa8 });
-  const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-  cube.visible = false;
-  cube.position.x = offsets.x;
-  cube.position.y = offsets.y;
-  cube.position.z = offsets.z;
-  return cube;
-}
+
+
+// Create a cube
+const cubeGeometry = new THREE.BoxGeometry(10, 10, 10);
+const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe:true });
+
+const cube9 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+const initialPosition9 = new THREE.Vector3(20, -20, 12);
+cube9.position.copy(initialPosition9);
+hiddenCubesGroup.add(cube9);
+cube9.visible =false;
+const cube8 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+const initialPosition8 = new THREE.Vector3(0, -20, 12);
+cube8.position.copy(initialPosition8);
+hiddenCubesGroup.add(cube8);
+cube8.visible =false;
+const cube7 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+const initialPosition7 = new THREE.Vector3(-20, -20, 12);
+cube7.position.copy(initialPosition7);
+hiddenCubesGroup.add(cube7);
+cube7.visible =false;
+const cube6 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+const initialPosition6 = new THREE.Vector3(20, 0, 12);
+cube6.position.copy(initialPosition6);
+hiddenCubesGroup.add(cube6);
+cube6.visible =false;
+const cube5 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+const initialPosition5 = new THREE.Vector3(0, 0, 12);
+cube5.position.copy(initialPosition5);
+hiddenCubesGroup.add(cube5);
+cube5.visible =false;
+const cube4 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+const initialPosition4 = new THREE.Vector3(-20, 0, 12);
+cube4.position.copy(initialPosition4);
+hiddenCubesGroup.add(cube4);
+cube4.visible =false;
+const cube3 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+const initialPosition3 = new THREE.Vector3(20, 20, 12);
+cube3.position.copy(initialPosition3);
+hiddenCubesGroup.add(cube3);
+cube3.visible =false;
+const cube1 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+const initialPosition1 = new THREE.Vector3(-20, 20, 12);
+cube1.position.copy(initialPosition1);
+hiddenCubesGroup.add(cube1);
+cube1.visible =false;
+const cube2 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+const initialPosition2 = new THREE.Vector3(-0, 20, 12);
+cube2.position.copy(initialPosition2);
+hiddenCubesGroup.add(cube2);
+cube2.visible =false;
+
 const players = ["X", "O"];
 const playerMeshes = {
   X: createXMesh(),
   O: createSphereMesh(),
 };
 let currentPlayerIndex = 0;
-const hiddenCubeOffsets = [
-  { x: -20, y: 20, z: 12 },
-  { x: 0, y: 20, z: 12 },
-  { x: 20, y: 20, z: 12 },
-  { x: -20, y: 0, z: 12 },
-  { x: 0, y: 0, z: 12 },
-  { x: 20, y: 0, z: 12 },
-  { x: -20, y: -20, z: 12 },
-  { x: 0, y: -20, z: 12 },
-  { x: 20, y: -20, z: 12 },
-];
+
 
 // Add Event Listeners and Handle Click Event
-hiddenCubeOffsets.forEach((offsets) => {
-  const hiddenCube = _hiddenCube(offsets);
-  hiddenCubesGroup.add(hiddenCube);
-});
+
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
@@ -150,11 +179,12 @@ const clickedCubes = [];
 
 function animate() {
   requestAnimationFrame(animate);
-
+ 
   // Rotate the board and hidden cubes
-  board.rotation.y += 0.001;
-  hiddenCubesGroup.rotation.y += 0.001;
-  gameSymbols.rotation.y += 0.001;
+  // scene.rotation.y += 0.001;
+  gameSymbols.children.forEach((playerMesh) => { // Adjust the rotation speed as needed
+    playerMesh.rotation.y += 0.02; // Adjust the rotation speed as needed
+  });
 
   renderer.render(scene, camera);
 }
