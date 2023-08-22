@@ -133,16 +133,7 @@ scene.add(board);
 scene.add(hiddenCubesGroup);
 scene.add(gameSymbols);
 
-function animate() {
-  requestAnimationFrame(animate);
 
-  // Rotate the board and hidden cubes
-  board.rotation.y += 0.001;
-  hiddenCubesGroup.rotation.y += 0.001;
-  gameSymbols.rotation.y += 0.001;
-
-  renderer.render(scene, camera);
-}
 function createXMesh() {
   const geometry = new THREE.BoxGeometry(10, 10, 1);
   const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe:true });
@@ -174,6 +165,19 @@ function onMouseMove(event) {
   }
 }
 const clickedCubes = [];
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  // Rotate the board and hidden cubes
+  board.rotation.y += 0.001;
+  hiddenCubesGroup.rotation.y += 0.001;
+  gameSymbols.rotation.y += 0.001;
+
+  renderer.render(scene, camera);
+}
+
+
 function onMouseDown(event) {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
