@@ -173,7 +173,7 @@ function onMouseMove(event) {
     intersects[0].object.material.color.set(0xff0000);
   }
 }
-
+const clickedCubes = [];
 function onMouseDown(event) {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -184,18 +184,24 @@ function onMouseDown(event) {
 
   if (intersects.length > 0) {
     const clickedCube = intersects[0].object;
-    clickedCube.visible = false;
 
-    // Add the appropriate player mesh at the same position
-    const currentPlayer = players[currentPlayerIndex];
-    const playerMesh = playerMeshes[currentPlayer].clone();
-    playerMesh.position.copy(clickedCube.position);
+    if (!clickedCube.userData.clicked) {
+      clickedCube.userData.clicked = true; // Mark the cube as clicked
+      clickedCube.visible = false;
 
-    // Add the player mesh to hiddenCubesGroup
-    gameSymbols.add(playerMesh);
+      // Add the appropriate player mesh at the same position
+      const currentPlayer = players[currentPlayerIndex];
+      const playerMesh = playerMeshes[currentPlayer].clone();
+      playerMesh.position.copy(clickedCube.position);
 
-    // Toggle player's turn
-    currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+      // Add the player mesh to hiddenCubesGroup
+      gameSymbols.add(playerMesh);
+
+      clickedCubes.push(clickedCube); // Store the clicked cube
+
+      // Toggle player's turn
+      currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+    }
   }
 }
 
