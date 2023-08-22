@@ -124,8 +124,6 @@ hiddenCubeOffsets.forEach((offsets) => {
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
-// Mouse move event handler
-renderer.domElement.addEventListener("mousemove", onMouseMove);
 
 // Mouse down event handler
 renderer.domElement.addEventListener("mousedown", onMouseDown);
@@ -148,22 +146,6 @@ function createSphereMesh() {
   return sphere;
 }
 
-function onMouseMove(event) {
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-  raycaster.setFromCamera(mouse, camera);
-
-  gameSymbols.children.forEach((cube) => {
-    cube.material.color.set(0x327fa8);
-  });
-
-  const intersects = raycaster.intersectObjects(hiddenCubesGroup.children);
-
-  if (intersects.length > 0) {
-    intersects[0].object.material.color.set(0xff0000);
-  }
-}
 const clickedCubes = [];
 
 function animate() {
