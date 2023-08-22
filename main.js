@@ -7,57 +7,76 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-camera.position.set(1, 1, 100);
+camera.position.z = 100;
 
 // Create the TicTacToe board
 const board = new THREE.Group();
 const hiddenCubesGroup = new THREE.Group();
 const gameSymbols = new THREE.Group();
 
+// Create a mesh standard material
+const material = new THREE.MeshStandardMaterial({
+    color: 0xfcc742,
+    emissive: 0x7b1414,
+    specular: 0x7b1414,
+    metalness: 0.5,
+    roughness: 0.5,
+    wireframe: true
+    
+});
+
+scene.background = new THREE.Color(0x282c34);
+
 // Player Turn
 let currentPlayer = 'sphere'; // Starting with sphere
+// Create lights
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
 
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+directionalLight.position.set(1, 1, 1);
+scene.add(directionalLight);
 
 // Vertical lines
 const verticalLineGeometry = new THREE.BoxGeometry(1, 64, 4);
-const verticalLineMaterial = new THREE.MeshBasicMaterial({color: 0x327fa8});
+// const verticalLineMaterial = new THREE.MeshBasicMaterial();
 
-const verticalLineLeft = new THREE.Mesh(verticalLineGeometry, verticalLineMaterial);
+const verticalLineLeft = new THREE.Mesh(verticalLineGeometry, material);
 verticalLineLeft.position.set(-32, 0, 12);
 board.add(verticalLineLeft);
 
 
-const verticalLineMiddleLeft = new THREE.Mesh(verticalLineGeometry, verticalLineMaterial);
+const verticalLineMiddleLeft = new THREE.Mesh(verticalLineGeometry, material);
 verticalLineMiddleLeft.position.set(-10, 0, 12);
 board.add(verticalLineMiddleLeft);
 
-const verticalLineRight = new THREE.Mesh(verticalLineGeometry, verticalLineMaterial);
+const verticalLineRight = new THREE.Mesh(verticalLineGeometry, material);
 verticalLineRight.position.set(32, 0, 12);
 board.add(verticalLineRight);
 
-const verticalLineMiddleRight = new THREE.Mesh(verticalLineGeometry, verticalLineMaterial);
+const verticalLineMiddleRight = new THREE.Mesh(verticalLineGeometry, material);
 verticalLineMiddleRight.position.set(10, 0, 12);
 board.add(verticalLineMiddleRight);
 
 
 // Horizontal lines
 const horizontalLineGeometry = new THREE.BoxGeometry(64, 1, 4);
-const horizontalLineMaterial = new THREE.MeshBasicMaterial({color: 0x327fa8});
+// const horizontalLineMaterial = new THREE.MeshBasicMaterial({color: 0x327fa8});
 
-const horizontalLineTop = new THREE.Mesh(horizontalLineGeometry, horizontalLineMaterial);
+const horizontalLineTop = new THREE.Mesh(horizontalLineGeometry, material);
 horizontalLineTop.position.set(0, 31.5, 12);
 board.add(horizontalLineTop);
 
-const horizontalLineMiddleTop = new THREE.Mesh(horizontalLineGeometry, horizontalLineMaterial);
+const horizontalLineMiddleTop = new THREE.Mesh(horizontalLineGeometry, material);
 horizontalLineMiddleTop.position.set(0, 10, 12);
 board.add(horizontalLineMiddleTop);
 
-const horizontalLineBottom = new THREE.Mesh(horizontalLineGeometry, horizontalLineMaterial);
+const horizontalLineBottom = new THREE.Mesh(horizontalLineGeometry, material);
 horizontalLineBottom.position.set(0, -31.5, 12);
 board.add(horizontalLineBottom);
 
 
-const horizontalLineMiddleBottom = new THREE.Mesh(horizontalLineGeometry, horizontalLineMaterial);
+const horizontalLineMiddleBottom = new THREE.Mesh(horizontalLineGeometry, material);
 horizontalLineMiddleBottom.position.set(0, -10, 12);
 board.add(horizontalLineMiddleBottom);
 
