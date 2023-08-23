@@ -13,7 +13,8 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 camera.position.z = 100;
-
+// Load Earth texture
+const earthTexture = new THREE.TextureLoader().load('./assets/images/2k_earth_daymap.jpg');
 // Create the TicTacToe board
 const board = new THREE.Group();
 const hiddenCubesGroup = new THREE.Group();
@@ -23,7 +24,6 @@ const gameSymbols = new THREE.Group();
 const material = new THREE.MeshStandardMaterial({
   color: 0xfcc742,
   emissive: 0x7b1414,
-  specular: 0x7b1414,
   metalness: 0.5,
   roughness: 0.5,
   wireframe: true,
@@ -92,7 +92,7 @@ board.add(horizontalLineMiddleBottom);
 
 // Create a cube
 const cubeGeometry = new THREE.BoxGeometry(10, 10, 10);
-const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe:true });
+const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
 
 const cube9 = new THREE.Mesh(cubeGeometry, cubeMaterial);
 const initialPosition9 = new THREE.Vector3(20, -20, 12);
@@ -143,7 +143,7 @@ cube2.visible =false;
 const players = ["X", "O"];
 const playerMeshes = {
   X: createXMesh(),
-  O: createSphereMesh(),
+  O: createEarthMesh(), 
 };
 let currentPlayerIndex = 0;
 
@@ -163,16 +163,16 @@ scene.add(gameSymbols);
 
 function createXMesh() {
   const geometry = new THREE.BoxGeometry(10, 10, 1);
-  const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe:true });
+  const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
   const cube = new THREE.Mesh(geometry, material);
   return cube;
 }
 
-function createSphereMesh() {
-  const sphereGeometry = new THREE.SphereGeometry(6, 50, 50, 0, Math.PI * 2, 0, Math.PI * 2);
-  const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe:true });
-  const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-  return sphere;
+function createEarthMesh() {
+  const earthGeometry = new THREE.SphereGeometry(6, 50, 50);
+  const earthMaterial = new THREE.MeshBasicMaterial({ map: earthTexture });
+  const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+  return earth;
 }
 
 const clickedCubes = [];
@@ -182,8 +182,8 @@ function animate() {
  
   // Rotate the board and hidden cubes
   // scene.rotation.y += 0.001;
-  gameSymbols.children.forEach((playerMesh) => { // Adjust the rotation speed as needed
-    playerMesh.rotation.y += 0.02; // Adjust the rotation speed as needed
+  gameSymbols.children.forEach((playerMesh) => { 
+    playerMesh.rotation.y += 0.008; 
   });
 
   renderer.render(scene, camera);
@@ -202,7 +202,7 @@ function onMouseDown(event) {
     const clickedCube = intersects[0].object;
 
     if (!clickedCube.userData.clicked) {
-      clickedCube.userData.clicked = true; // Mark the cube as clicked
+      clickedCube.userData.clicked = true; 
       clickedCube.visible = false;
 
       // Add the appropriate player mesh at the same position
@@ -213,7 +213,7 @@ function onMouseDown(event) {
       // Add the player mesh to hiddenCubesGroup
       gameSymbols.add(playerMesh);
 
-      clickedCubes.push(clickedCube); // Store the clicked cube
+      clickedCubes.push(clickedCube); 
 
       // Toggle player's turn
       currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
