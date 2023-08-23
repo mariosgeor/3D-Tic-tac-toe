@@ -15,6 +15,7 @@ document.body.appendChild(renderer.domElement);
 camera.position.z = 100;
 // Load Earth texture
 const earthTexture = new THREE.TextureLoader().load('./assets/images/2k_earth_daymap.jpg');
+const xTexture = new THREE.TextureLoader().load('./assets/images/texture2.jpg');
 // Create the TicTacToe board
 const board = new THREE.Group();
 const hiddenCubesGroup = new THREE.Group();
@@ -26,7 +27,7 @@ const material = new THREE.MeshStandardMaterial({
   emissive: 0x7b1414,
   metalness: 0.5,
   roughness: 0.5,
-  wireframe: true,
+  // wireframe: true,
 });
 
 scene.background = new THREE.Color(0x282c34);
@@ -162,11 +163,26 @@ scene.add(gameSymbols);
 
 
 function createXMesh() {
-  const geometry = new THREE.BoxGeometry(10, 10, 1);
-  const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-  const cube = new THREE.Mesh(geometry, material);
-  return cube;
+  const xGroup = new THREE.Group();
+
+  const xArmGeometry1 = new THREE.BoxGeometry(2, 12, 1);
+  const xArmMaterial = new THREE.MeshBasicMaterial({ map: xTexture });
+  const xArm1 = new THREE.Mesh(xArmGeometry1, xArmMaterial);
+  xArm1.position.set(0, 0, 0);
+  xArm1.rotation.z = 2.7;
+  xGroup.add(xArm1);
+
+  const xArmGeometry2 = new THREE.BoxGeometry(2, 12, 1);
+  const xArm2 = new THREE.Mesh(xArmGeometry2, xArmMaterial);
+  xArm2.position.set(0, 0, 0);
+  xArm2.rotation.z = 3.6;
+  xGroup.add(xArm2);
+
+
+
+  return xGroup;
 }
+
 
 function createEarthMesh() {
   const earthGeometry = new THREE.SphereGeometry(6, 50, 50);
