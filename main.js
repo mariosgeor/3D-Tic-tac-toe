@@ -13,15 +13,15 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 camera.position.z = 100;
-// Load Earth texture
+
 const earthTexture = new THREE.TextureLoader().load('./assets/images/2k_earth_daymap.jpg');
 const xTexture = new THREE.TextureLoader().load('./assets/images/texture2.jpg');
-// Create the TicTacToe board
+
 const board = new THREE.Group();
 const hiddenCubesGroup = new THREE.Group();
 const gameSymbols = new THREE.Group();
 
-// Create a mesh standard material
+
 const material = new THREE.MeshStandardMaterial({
   color: 0xfcc742,
   emissive: 0x7b1414,
@@ -32,9 +32,9 @@ const material = new THREE.MeshStandardMaterial({
 
 scene.background = new THREE.Color(0x282c34);
 
-// Player Turn
+
 let currentPlayer = "sphere"; // Starting with sphere
-// Create lights
+
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
 
@@ -42,7 +42,7 @@ const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
 directionalLight.position.set(1, 1, 1);
 scene.add(directionalLight);
 
-// Vertical lines
+
 const verticalLineGeometry = new THREE.BoxGeometry(1, 64, 4);
 // const verticalLineMaterial = new THREE.MeshBasicMaterial();
 
@@ -62,7 +62,7 @@ const verticalLineMiddleRight = new THREE.Mesh(verticalLineGeometry, material);
 verticalLineMiddleRight.position.set(10, 0, 12);
 board.add(verticalLineMiddleRight);
 
-// Horizontal lines
+
 const horizontalLineGeometry = new THREE.BoxGeometry(64, 1, 4);
 // const horizontalLineMaterial = new THREE.MeshBasicMaterial({color: 0x327fa8});
 
@@ -88,10 +88,7 @@ const horizontalLineMiddleBottom = new THREE.Mesh(
 horizontalLineMiddleBottom.position.set(0, -10, 12);
 board.add(horizontalLineMiddleBottom);
 
-// Hidden cubes
 
-
-// Create a cube
 const cubeGeometry = new THREE.BoxGeometry(10, 10, 10);
 const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
 
@@ -149,13 +146,13 @@ const playerMeshes = {
 let currentPlayerIndex = 0;
 
 
-// Add Event Listeners and Handle Click Event
+
 
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
 
-// Mouse down event handler
+
 renderer.domElement.addEventListener("mousedown", onMouseDown);
 scene.add(board);
 scene.add(hiddenCubesGroup);
@@ -196,7 +193,6 @@ const clickedCubes = [];
 function animate() {
   requestAnimationFrame(animate);
  
-  // Rotate the board and hidden cubes
   // scene.rotation.y += 0.001;
   gameSymbols.children.forEach((playerMesh) => { 
     playerMesh.rotation.y += 0.008; 
@@ -221,20 +217,33 @@ function onMouseDown(event) {
       clickedCube.userData.clicked = true; 
       clickedCube.visible = false;
 
-      // Add the appropriate player mesh at the same position
+      
       const currentPlayer = players[currentPlayerIndex];
       const playerMesh = playerMeshes[currentPlayer].clone();
       playerMesh.position.copy(clickedCube.position);
 
-      // Add the player mesh to hiddenCubesGroup
+
       gameSymbols.add(playerMesh);
 
       clickedCubes.push(clickedCube); 
 
-      // Toggle player's turn
+
       currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
     }
   }
 }
+window.addEventListener("resize", onWindowResize);
+
+function onWindowResize() {
+  const newWidth = window.innerWidth;
+  const newHeight = window.innerHeight;
+
+  camera.aspect = newWidth / newHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(newWidth, newHeight);
+}
+
+
+onWindowResize();
 
 animate();
