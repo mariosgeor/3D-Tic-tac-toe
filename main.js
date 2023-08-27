@@ -8,21 +8,20 @@ const camera = new THREE.PerspectiveCamera(
   1000
 );
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({
+  antialias:true
+});
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio)
 document.body.appendChild(renderer.domElement);
 
 camera.position.z = 100;
 
-const earthTexture = new THREE.TextureLoader().load('./assets/images/2k_earth_daymap.jpg');
-const xTexture = new THREE.TextureLoader().load('./assets/images/texture2.jpg');
+
 
 const board = new THREE.Group();
 const hiddenCubesGroup = new THREE.Group();
 const gameSymbols = new THREE.Group();
-
-
-scene.background = new THREE.Color(0x282c34);
 
 
 let currentPlayer = "sphere"; // Starting with sphere
@@ -111,7 +110,7 @@ function createXMesh() {
   const xGroup = new THREE.Group();
 
   const xArmGeometry1 = new THREE.BoxGeometry(2, 12, 1);
-  const xArmMaterial = new THREE.MeshBasicMaterial({ map: xTexture });
+  const xArmMaterial = new THREE.MeshBasicMaterial();
   const xArm1 = new THREE.Mesh(xArmGeometry1, xArmMaterial);
   xArm1.position.set(0, 0, 0);
   xArm1.rotation.z = 2.7;
@@ -129,9 +128,16 @@ function createXMesh() {
 }
 
 
+const earthTexture = new THREE.TextureLoader().load('./assets/images/2k_earth_daymap.jpg');
+
 function createEarthMesh() {
-  const earthGeometry = new THREE.SphereGeometry(6, 50, 50);
-  const earthMaterial = new THREE.MeshBasicMaterial({ map: earthTexture });
+  const earthGeometry = new THREE.SphereGeometry(5, 50, 50);
+  const earthMaterial = new THREE.MeshBasicMaterial({ 
+    // color: 0xff0000
+    map: new THREE.TextureLoader().load(
+      './assets/images/globe.jpg'
+    )
+   });
   const earth = new THREE.Mesh(earthGeometry, earthMaterial);
   return earth;
 }
@@ -141,7 +147,6 @@ const clickedCubes = [];
 function animate() {
   requestAnimationFrame(animate);
  
-  // scene.rotation.y += 0.001;
   gameSymbols.children.forEach((playerMesh) => { 
     playerMesh.rotation.y += 0.008; 
   });
@@ -190,6 +195,27 @@ function onWindowResize() {
   camera.updateProjectionMatrix();
   renderer.setSize(newWidth, newHeight);
 }
+
+const starGeometry = new THREE.BufferGeometry()
+const starMaterial= new THREE.PointsMaterial({
+  color: 0xffffff
+})
+
+const starVertices = []
+
+for (let i = 0; i < 10000; i++) {
+  const x = (Math.random() - 0.5) * 2000
+  const y = (Math.random() - 0.5) * 2000
+  const z = -Math.random() * 2000
+  starVertices.push(x,y,z)
+}
+
+starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(
+  starVertices, 3
+))
+
+const stars = new THREE.Points(starGeometry, starMaterial)
+scene.add(stars)
 
 
 onWindowResize();
