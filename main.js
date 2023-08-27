@@ -22,14 +22,6 @@ const hiddenCubesGroup = new THREE.Group();
 const gameSymbols = new THREE.Group();
 
 
-const material = new THREE.MeshStandardMaterial({
-  color: 0xfcc742,
-  emissive: 0x7b1414,
-  metalness: 0.5,
-  roughness: 0.5,
-  // wireframe: true,
-});
-
 scene.background = new THREE.Color(0x282c34);
 
 
@@ -43,50 +35,33 @@ directionalLight.position.set(1, 1, 1);
 scene.add(directionalLight);
 
 
-const verticalLineGeometry = new THREE.BoxGeometry(1, 64, 4);
-// const verticalLineMaterial = new THREE.MeshBasicMaterial();
+const material = new THREE.MeshStandardMaterial({
+  color: 0xfcc742,
+  emissive: 0x7b1414,
+  metalness: 0.5,
+  roughness: 0.5,
+});
 
-const verticalLineLeft = new THREE.Mesh(verticalLineGeometry, material);
-verticalLineLeft.position.set(-32, 0, 12);
-board.add(verticalLineLeft);
-
-const verticalLineMiddleLeft = new THREE.Mesh(verticalLineGeometry, material);
-verticalLineMiddleLeft.position.set(-10, 0, 12);
-board.add(verticalLineMiddleLeft);
-
-const verticalLineRight = new THREE.Mesh(verticalLineGeometry, material);
-verticalLineRight.position.set(32, 0, 12);
-board.add(verticalLineRight);
-
-const verticalLineMiddleRight = new THREE.Mesh(verticalLineGeometry, material);
-verticalLineMiddleRight.position.set(10, 0, 12);
-board.add(verticalLineMiddleRight);
-
-
+const lineGeometry = new THREE.BoxGeometry(1, 64, 4);
 const horizontalLineGeometry = new THREE.BoxGeometry(64, 1, 4);
-// const horizontalLineMaterial = new THREE.MeshBasicMaterial({color: 0x327fa8});
 
-const horizontalLineTop = new THREE.Mesh(horizontalLineGeometry, material);
-horizontalLineTop.position.set(0, 31.5, 12);
-board.add(horizontalLineTop);
+const linePositions = [
+  { position: new THREE.Vector3(-32, 0, 12), horizontal: false },
+  { position: new THREE.Vector3(-10, 0, 12), horizontal: false },
+  { position: new THREE.Vector3(10, 0, 12), horizontal: false },
+  { position: new THREE.Vector3(32, 0, 12), horizontal: false },
+  { position: new THREE.Vector3(0, 31.5, 12), horizontal: true },
+  { position: new THREE.Vector3(0, 10, 12), horizontal: true },
+  { position: new THREE.Vector3(0, -10, 12), horizontal: true },
+  { position: new THREE.Vector3(0, -31.5, 12), horizontal: true },
+];
 
-const horizontalLineMiddleTop = new THREE.Mesh(
-  horizontalLineGeometry,
-  material
-);
-horizontalLineMiddleTop.position.set(0, 10, 12);
-board.add(horizontalLineMiddleTop);
+linePositions.forEach(line => {
+  const lineMesh = new THREE.Mesh(line.horizontal ? horizontalLineGeometry : lineGeometry, material);
+  lineMesh.position.copy(line.position);
+  board.add(lineMesh);
+});
 
-const horizontalLineBottom = new THREE.Mesh(horizontalLineGeometry, material);
-horizontalLineBottom.position.set(0, -31.5, 12);
-board.add(horizontalLineBottom);
-
-const horizontalLineMiddleBottom = new THREE.Mesh(
-  horizontalLineGeometry,
-  material
-);
-horizontalLineMiddleBottom.position.set(0, -10, 12);
-board.add(horizontalLineMiddleBottom);
 
 
 const cubeGeometry = new THREE.BoxGeometry(10, 10, 10);
