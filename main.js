@@ -1,5 +1,5 @@
 import * as THREE from "three";
-
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
   75,
@@ -17,14 +17,16 @@ document.body.appendChild(renderer.domElement);
 
 camera.position.z = 100;
 
-
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; 
+controls.dampingFactor = 0.05;
 
 const board = new THREE.Group();
 const hiddenCubesGroup = new THREE.Group();
 const gameSymbols = new THREE.Group();
 
 
-let currentPlayer = "sphere"; // Starting with sphere
+let currentPlayer = "sphere"; 
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
@@ -128,8 +130,6 @@ function createXMesh() {
 }
 
 
-const earthTexture = new THREE.TextureLoader().load('./assets/images/2k_earth_daymap.jpg');
-
 function createEarthMesh() {
   const earthGeometry = new THREE.SphereGeometry(5, 50, 50);
   const earthMaterial = new THREE.MeshBasicMaterial({ 
@@ -146,14 +146,15 @@ const clickedCubes = [];
 
 function animate() {
   requestAnimationFrame(animate);
- 
-  gameSymbols.children.forEach((playerMesh) => { 
-    playerMesh.rotation.y += 0.008; 
+
+  gameSymbols.children.forEach((playerMesh) => {
+    playerMesh.rotation.y += 0.008;
   });
+
+  controls.update(); 
 
   renderer.render(scene, camera);
 }
-
 
 function onMouseDown(event) {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -210,25 +211,28 @@ function onWindowResize() {
 }
 
 const starGeometry = new THREE.BufferGeometry()
-const starMaterial= new THREE.PointsMaterial({
-  color: 0xffffff
-})
+const starMaterial = new THREE.PointsMaterial({
+  color: 0xffffff,
+});
 
-const starVertices = []
+const starVertices = [];
 
 for (let i = 0; i < 10000; i++) {
-  const x = (Math.random() - 0.5) * 2000
-  const y = (Math.random() - 0.5) * 2000
-  const z = -Math.random() * 2000
-  starVertices.push(x,y,z)
+  const x = (Math.random() - 0.5) * 2000;
+  const y = (Math.random() - 0.5) * 2000;
+  const z = (Math.random() - 0.5) * 2000; 
+  starVertices.push(x, y, z);
 }
 
-starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(
-  starVertices, 3
-))
+starGeometry.setAttribute(
+  'position',
+  new THREE.Float32BufferAttribute(starVertices, 3)
+);
 
-const stars = new THREE.Points(starGeometry, starMaterial)
-scene.add(stars)
+const stars = new THREE.Points(starGeometry, starMaterial);
+scene.add(stars);
+
+
 
 
 onWindowResize();
