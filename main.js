@@ -170,21 +170,34 @@ function onMouseDown(event) {
       clickedCube.userData.clicked = true; 
       clickedCube.visible = false;
 
-      
       const currentPlayer = players[currentPlayerIndex];
       const playerMesh = playerMeshes[currentPlayer].clone();
       playerMesh.position.copy(clickedCube.position);
 
-
       gameSymbols.add(playerMesh);
-
       clickedCubes.push(clickedCube); 
 
-
       currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+
+      // Custom scale-up animation for the player mesh
+      let scaleValue = 0;
+      const animationSpeed = 0.1;
+
+      function animateScaleUp() {
+        if (scaleValue < 1) {
+          scaleValue += animationSpeed;
+
+          playerMesh.scale.set(scaleValue, scaleValue, scaleValue);
+
+          requestAnimationFrame(animateScaleUp);
+        }
+      }
+
+      animateScaleUp();
     }
   }
 }
+
 window.addEventListener("resize", onWindowResize);
 
 function onWindowResize() {
