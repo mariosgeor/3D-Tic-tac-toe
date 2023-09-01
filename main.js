@@ -25,8 +25,6 @@ const board = new THREE.Group();
 const hiddenCubesGroup = new THREE.Group();
 const gameSymbols = new THREE.Group();
 
-let currentPlayer = "sphere";
-
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
 
@@ -34,49 +32,54 @@ const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
 directionalLight.position.set(1, 1, 1);
 scene.add(directionalLight);
 
-const material = new THREE.MeshStandardMaterial({
-  color: 0xfcc742,
-  emissive: 0x7b1414,
-  metalness: 0.5,
-  roughness: 0.5,
-});
+const material = new THREE.MeshNormalMaterial(
+// {
+//   color: 0xfcc742,
+//   emissive: 0x7b1414,
+//   metalness: 0.5,
+//   roughness: 0.5,
+// }
+);
 
-const lineGeometry = new THREE.BoxGeometry(1, 64, 4);
-const horizontalLineGeometry = new THREE.BoxGeometry(64, 1, 4);
+const cylinderGeometry = new THREE.CylinderGeometry(1, 1, 90, 32);
+const horizontalCylinderGeometry = new THREE.CylinderGeometry(1, 1, 90, 32);
 
 const linePositions = [
-  { position: new THREE.Vector3(-32, 0, 12), horizontal: false },
-  { position: new THREE.Vector3(-10, 0, 12), horizontal: false },
-  { position: new THREE.Vector3(10, 0, 12), horizontal: false },
-  { position: new THREE.Vector3(32, 0, 12), horizontal: false },
-  { position: new THREE.Vector3(0, 31.5, 12), horizontal: true },
-  { position: new THREE.Vector3(0, 10, 12), horizontal: true },
-  { position: new THREE.Vector3(0, -10, 12), horizontal: true },
-  { position: new THREE.Vector3(0, -31.5, 12), horizontal: true },
+  { position: new THREE.Vector3(-44.5, 0, 12), horizontal: false },
+  { position: new THREE.Vector3(-14.8, 0, 12), horizontal: false },
+  { position: new THREE.Vector3(14.8, 0, 12), horizontal: false },
+  { position: new THREE.Vector3(44.5, 0, 12), horizontal: false },
+  { position: new THREE.Vector3(0, 44.5, 12), horizontal: true },
+  { position: new THREE.Vector3(0, 14.8, 12), horizontal: true },
+  { position: new THREE.Vector3(0, -14.8, 12), horizontal: true },
+  { position: new THREE.Vector3(0, -44.5, 12), horizontal: true },
 ];
 
 linePositions.forEach((line) => {
   const lineMesh = new THREE.Mesh(
-    line.horizontal ? horizontalLineGeometry : lineGeometry,
+    line.horizontal ? horizontalCylinderGeometry : cylinderGeometry,
     material
   );
   lineMesh.position.copy(line.position);
+  if (line.horizontal) {
+    lineMesh.rotation.z = Math.PI / 2;
+  }
   board.add(lineMesh);
 });
 
-const cubeGeometry = new THREE.BoxGeometry(10, 10, 10);
+const cubeGeometry = new THREE.BoxGeometry(20, 20, 10);
 const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
 
 const cubePositions = [
-  new THREE.Vector3(20, -20, 12),
-  new THREE.Vector3(0, -20, 12),
-  new THREE.Vector3(-20, -20, 12),
-  new THREE.Vector3(20, 0, 12),
+  new THREE.Vector3(30, -30, 12),
+  new THREE.Vector3(0, -30, 12),
+  new THREE.Vector3(-30, -30, 12),
+  new THREE.Vector3(30, 0, 12),
   new THREE.Vector3(0, 0, 12),
-  new THREE.Vector3(-20, 0, 12),
-  new THREE.Vector3(20, 20, 12),
-  new THREE.Vector3(-20, 20, 12),
-  new THREE.Vector3(0, 20, 12),
+  new THREE.Vector3(-30, 0, 12),
+  new THREE.Vector3(30, 30, 12),
+  new THREE.Vector3(-30, 30, 12),
+  new THREE.Vector3(0, 30, 12),
 ];
 
 cubePositions.forEach((position) => {
@@ -104,14 +107,14 @@ scene.add(gameSymbols);
 function createXMesh() {
   const xGroup = new THREE.Group();
 
-  const xArmGeometry1 = new THREE.BoxGeometry(2, 12, 1);
+  const xArmGeometry1 = new THREE.BoxGeometry(2, 15, 1);
   const xArmMaterial = new THREE.MeshBasicMaterial();
   const xArm1 = new THREE.Mesh(xArmGeometry1, xArmMaterial);
   xArm1.position.set(0, 0, 0);
   xArm1.rotation.z = 2.7;
   xGroup.add(xArm1);
 
-  const xArmGeometry2 = new THREE.BoxGeometry(2, 12, 1);
+  const xArmGeometry2 = new THREE.BoxGeometry(2, 15, 1);
   const xArm2 = new THREE.Mesh(xArmGeometry2, xArmMaterial);
   xArm2.position.set(0, 0, 0);
   xArm2.rotation.z = 3.6;
@@ -121,7 +124,7 @@ function createXMesh() {
 }
 
 function createEarthMesh() {
-  const earthGeometry = new THREE.SphereGeometry(5, 50, 50);
+  const earthGeometry = new THREE.SphereGeometry(6.5, 50, 50);
   const earthMaterial = new THREE.MeshBasicMaterial({
     // color: 0xff0000
     map: new THREE.TextureLoader().load("./assets/images/globe.jpg"),
@@ -164,9 +167,10 @@ function onMouseDown(event) {
       playerMesh.position.copy(clickedCube.position);
       clickedCube.userData.player = currentPlayer;
 
-      playerMesh.userData.symbol = (currentPlayer === players[0]) ? 'X' : 'sphere';
+      playerMesh.userData.symbol =
+        currentPlayer === players[0] ? "X" : "sphere";
       gameSymbols.add(playerMesh);
-      
+
       clickedCubes.push(clickedCube);
 
       console.log(`Current Player: ${currentPlayer}`);
@@ -197,28 +201,40 @@ function onMouseDown(event) {
           return `{x: ${vector.x}, y: ${vector.y}, z: ${vector.z}}`;
         }
         if (gameSymbols) {
-          const positionsToCheck = [pos0, pos1, pos2, pos3, pos4, pos5, pos6, pos7, pos8];
-        
+          const positionsToCheck = [
+            pos0,
+            pos1,
+            pos2,
+            pos3,
+            pos4,
+            pos5,
+            pos6,
+            pos7,
+            pos8,
+          ];
+
           for (const condition of winConditions) {
             const matchingSymbols = [];
-            
+
             for (const position of condition) {
               const matchingChild = gameSymbols.children.find((gameSymbol) => {
                 return gameSymbol.position.equals(position);
               });
-        
+
               if (matchingChild) {
                 matchingSymbols.push(matchingChild);
               }
             }
-        
+
             if (matchingSymbols.length === 3) {
-              const playerSymbol = (player === players[0]) ? 'X' : 'sphere';
-              
-              const allMatched = matchingSymbols.every(symbol => symbol.userData.symbol === playerSymbol);
+              const playerSymbol = player === players[0] ? "X" : "sphere";
+
+              const allMatched = matchingSymbols.every(
+                (symbol) => symbol.userData.symbol === playerSymbol
+              );
               if (allMatched) {
                 console.log(`Player ${player} wins!`);
-                return true; 
+                return true;
               }
             }
           }
