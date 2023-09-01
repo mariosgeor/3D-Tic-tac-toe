@@ -25,6 +25,7 @@ const board = new THREE.Group();
 const hiddenCubesGroup = new THREE.Group();
 const gameSymbols = new THREE.Group();
 
+
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
 
@@ -117,9 +118,8 @@ function createXMesh() {
 }
 
 function createEarthMesh() {
-  const earthGeometry = new THREE.SphereGeometry(6.5, 50, 50);
+  const earthGeometry = new THREE.SphereGeometry(6, 50, 50);
   const earthMaterial = new THREE.MeshBasicMaterial({
-    // color: 0xff0000
     map: new THREE.TextureLoader().load("./assets/images/globe.jpg"),
   });
   const earth = new THREE.Mesh(earthGeometry, earthMaterial);
@@ -160,26 +160,23 @@ function onMouseDown(event) {
       playerMesh.position.copy(clickedCube.position);
       clickedCube.userData.player = currentPlayer;
 
-      playerMesh.userData.symbol =
-        currentPlayer === players[0] ? "X" : "sphere";
+      playerMesh.userData.symbol = (currentPlayer === players[0]) ? 'X' : 'sphere';
       gameSymbols.add(playerMesh);
-
+      
       clickedCubes.push(clickedCube);
-
-      console.log(`Current Player: ${currentPlayer}`);
 
       currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
 
       function checkWin(player) {
-        let pos8 = { x: 20, y: -20, z: 12 };
-        let pos7 = { x: 0, y: -20, z: 12 };
-        let pos6 = { x: -20, y: -20, z: 12 };
-        let pos5 = { x: 20, y: 0, z: 12 };
+        let pos8 = { x: 30, y: -30, z: 12 };
+        let pos7 = { x: 0, y: -30, z: 12 };
+        let pos6 = { x: -30, y: -30, z: 12 };
+        let pos5 = { x: 30, y: 0, z: 12 };
         let pos4 = { x: 0, y: 0, z: 12 };
-        let pos3 = { x: -20, y: 0, z: 12 };
-        let pos2 = { x: 20, y: 20, z: 12 };
-        let pos0 = { x: -20, y: 20, z: 12 };
-        let pos1 = { x: 0, y: 20, z: 12 };
+        let pos3 = { x: -30, y: 0, z: 12 };
+        let pos2 = { x: 30, y: 30, z: 12 };
+        let pos0 = { x: -30, y: 30, z: 12 };
+        let pos1 = { x: 0, y: 30, z: 12 };
         const winConditions = [
           [pos0, pos1, pos2],
           [pos3, pos4, pos5],
@@ -194,48 +191,37 @@ function onMouseDown(event) {
           return `{x: ${vector.x}, y: ${vector.y}, z: ${vector.z}}`;
         }
         if (gameSymbols) {
-          const positionsToCheck = [
-            pos0,
-            pos1,
-            pos2,
-            pos3,
-            pos4,
-            pos5,
-            pos6,
-            pos7,
-            pos8,
-          ];
-
+          const positionsToCheck = [pos0, pos1, pos2, pos3, pos4, pos5, pos6, pos7, pos8];
+        
           for (const condition of winConditions) {
             const matchingSymbols = [];
-
+            
             for (const position of condition) {
               const matchingChild = gameSymbols.children.find((gameSymbol) => {
                 return gameSymbol.position.equals(position);
               });
-
+        
               if (matchingChild) {
                 matchingSymbols.push(matchingChild);
               }
             }
-
+        
             if (matchingSymbols.length === 3) {
-              const playerSymbol = player === players[0] ? "X" : "sphere";
-
-              const allMatched = matchingSymbols.every(
-                (symbol) => symbol.userData.symbol === playerSymbol
-              );
+              const playerSymbol = (player === players[0]) ? 'X' : 'sphere';
+              
+              const allMatched = matchingSymbols.every(symbol => symbol.userData.symbol === playerSymbol);
               if (allMatched) {
+                for (const symbol of matchingSymbols) {
+                  animateScale(symbol);
+                }
                 console.log(`Player ${player} wins!`);
-                return true;
+                return true; 
               }
             }
           }
         }
       }
       checkWin(currentPlayer);
-
-      // Custom scale-up animation for the player mesh
       let scaleValue = 0;
       const animationSpeed = 0.1;
 
@@ -253,6 +239,20 @@ function onMouseDown(event) {
     }
   }
 }
+function animateScale(mesh) {
+  let scaleValue = 1;
+  const animationSpeed = 0.005;
+
+  function animate() {
+    scaleValue = 1 + 0.1 * Math.sin(Date.now() * animationSpeed);
+    mesh.scale.set(scaleValue, scaleValue, scaleValue);
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+}
+
+
 
 window.addEventListener("resize", onWindowResize);
 
