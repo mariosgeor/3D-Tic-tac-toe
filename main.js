@@ -32,14 +32,7 @@ const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
 directionalLight.position.set(1, 1, 1);
 scene.add(directionalLight);
 
-const material = new THREE.MeshNormalMaterial(
-// {
-//   color: 0xfcc742,
-//   emissive: 0x7b1414,
-//   metalness: 0.5,
-//   roughness: 0.5,
-// }
-);
+const material = new THREE.MeshNormalMaterial();
 
 const cylinderGeometry = new THREE.CylinderGeometry(1, 1, 90, 32);
 const horizontalCylinderGeometry = new THREE.CylinderGeometry(1, 1, 90, 32);
