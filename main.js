@@ -120,7 +120,7 @@ function createXMesh() {
 function createEarthMesh() {
   const earthGeometry = new THREE.SphereGeometry(6, 50, 50);
   const earthMaterial = new THREE.MeshBasicMaterial({
-    map: new THREE.TextureLoader().load("./public/globe.jpg"),
+    map: new THREE.TextureLoader().load("./globe.jpg"),
   });
   const earth = new THREE.Mesh(earthGeometry, earthMaterial);
   return earth;
